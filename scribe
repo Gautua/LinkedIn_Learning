@@ -97,7 +97,7 @@ scribe = TerminalScribe(canvas)
 
 # scribe.draw_square(5)
 
-# moving the scribe in the direction set during it's construction 
+# moving the scribe in the direction set using the set_degrees function or just moving it in the previous direction 
 
 scribe.setDegrees(140)
 scribe.forward()
