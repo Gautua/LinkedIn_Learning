@@ -117,7 +117,7 @@ scribe = TerminalScribe(canvas)
 # Since its a list of stuff about a scribe, trying a list of dictionaries
 
 scribe_data = [{'name':'Sam','pos':[10,5],'direc':130,'marker':'+','color':'green','move':'up,down,right,forward,left'+(',up'*4)},
-{'name':'Rick','pos':[20,18],'direc':90,'marker':'*','color':'blue','move':'down,'*4+',left'*3}
+{'name':'Rick','pos':[10,18],'direc':90,'marker':'*','color':'blue','move':'down,'*4+',left'*3}
                 ]
 
 
@@ -130,6 +130,12 @@ for item in scribe_data:
     scribes[-1].setPosition(item['pos'])
 
 # Function to move the scribes 
+
+def find_max_instructions(x):
+    sc = []
+    for item in x:
+        sc.append(list(item['move'].split(',')))
+    return max([len(item) for item in sc])
 
 def move(scribes):
     for i in range(len(scribes)):
@@ -145,5 +151,13 @@ def move(scribes):
                     scribes[i].right()
                 case _:
                     scribes[i].forward()
+
+# def move_together(scribe_data,scribes):
+#     for i in range(find_max_instructions(scribe_data)):
+#         for k in range(len(scribes)):
+#             if  i <len(scribe_data[k]['move'].split(',')):
+#                 pass    
+#     pass
+
 
 move(scribes)
