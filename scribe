@@ -31,17 +31,22 @@ class Canvas:
             print(' '.join([col[y] for col in self._canvas]))
 
 class TerminalScribe:
-    def __init__(self, canvas):
+    def __init__(self, canvas,mark='*',name="None",color = None):
         self.canvas = canvas
         self.trail = '.'
-        self.mark = '*'
+        self.mark = mark
         self.framerate = 0.2
         self.pos = [25, 25]
         self.direction = [0,1]
+        self.name = name
+        self.color = color
     # changing the directions using degrees
     def setDegrees(self,degrees):
         radians = (degrees/180)*pi
         self.direction = [sin(radians),cos(radians)]
+
+    def setPosition(self,pos):
+        self.pos = [pos[0],pos[1]]
 
     def up(self):
         self.direction = [0,-1]
@@ -65,7 +70,7 @@ class TerminalScribe:
         # Update position
         self.pos = pos
         # Set the new position to the "mark" symbol
-        self.canvas.setPos(self.pos, colored(self.mark, 'red'))
+        self.canvas.setPos(self.pos, colored(self.mark, self.color))
         # Print everything to the screen
         self.canvas.print()
         # Sleep for a little bit to create the animation
@@ -97,10 +102,48 @@ scribe = TerminalScribe(canvas)
 
 # scribe.draw_square(5)
 
-# moving the scribe in the direction set using the set_degrees function or just moving it in the previous direction 
+# create a data structure that holds the following information about a scribe
+# use this structure to create scribes
+# create a function that uses these structures to move the scribe
 
-scribe.setDegrees(140)
-scribe.forward()
-scribe.setDegrees(90)
-scribe.forward()
-scribe.forward()
+# the structure should include the following:
+# name of the scribe
+# position
+# direction
+# moves - up/down/right/left
+# marker used for that scribe 
+# color for the marker
+
+# Since its a list of stuff about a scribe, trying a list of dictionaries
+
+scribe_data = [{'name':'Sam','pos':[10,5],'direc':130,'marker':'+','color':'green','move':'up,down,right,forward,left'+(',up'*4)},
+{'name':'Rick','pos':[20,18],'direc':90,'marker':'*','color':'blue','move':'down,'*4+',left'*3}
+                ]
+
+
+scribes = []
+
+# loop that initialises the scribes, sets the postions and directions
+for item in scribe_data:
+    scribes.append(TerminalScribe(canvas,mark = item['marker'],name = item['name'],color = item['color']))
+    scribes[-1].setDegrees(item['direc'])
+    scribes[-1].setPosition(item['pos'])
+
+# Function to move the scribes 
+
+def move(scribes):
+    for i in range(len(scribes)):
+        for move_made in scribe_data[i]['move'].split(','):
+            match move_made:
+                case 'up':
+                    scribes[i].up()
+                case 'down':
+                    scribes[i].down()
+                case 'left':
+                    scribes[i].left()
+                case 'right':
+                    scribes[i].right()
+                case _:
+                    scribes[i].forward()
+
+move(scribes)
