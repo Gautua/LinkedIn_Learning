@@ -94,14 +94,15 @@ class TerminalScribe:
     # we have to bounce the scribe off the walls if hit
     # reverse axis which causes the collision with the wall
     def forward(self,n=1):
-        pos = [self.pos[0] + (n * self.direction[0]), self.pos[1] + (n * self.direction[1])]
-        # if no collision happens , keep going
-        temp = self.canvas.hitsWall(pos)
-        if temp == 0:
-            pos[0] = pos[0]*-1
-        elif temp == 1:
-            pos[1] = pos[1]*-1
-        self.draw(pos)
+        for i in range(n):
+            pos = [self.pos[0] + (self.direction[0]), self.pos[1] + (self.direction[1])]
+            # if no collision happens , keep going
+            temp = self.canvas.hitsWall(pos)
+            if temp == 0:
+                pos[0] = pos[0]*-1
+            elif temp == 1:
+                pos[1] = pos[1]*-1
+            self.draw(pos)
         
 
 
@@ -184,6 +185,4 @@ def move_together(scribe_data,scribes):
 # checking the implementation of bouncing off walls
 
 scribe.setDegrees(270)
-for i in range(7):
-    time.sleep(1)
-    scribe.forward()
+scribe.forward(7)
