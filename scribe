@@ -36,12 +36,12 @@ class Canvas:
             print(' '.join([col[y] for col in self._canvas]))
 
 class TerminalScribe:
-    def __init__(self, canvas,mark='*',name="None",color = None):
+    def __init__(self, canvas,mark='*',name="None",color = "red"):
         self.canvas = canvas
         self.trail = '.'
         self.mark = mark
-        self.framerate = 0.2
-        self.pos = [5, 5]
+        self.framerate = 0.05
+        self.pos = [0,0]
         self.direction = [0,1]
         self.name = name
         self.color = color
@@ -80,6 +80,7 @@ class TerminalScribe:
         self.canvas.print()
         # Sleep for a little bit to create the animation
         time.sleep(self.framerate)
+
     def draw_square(self,size):
          size = size-1
          for i in range(size):
@@ -103,16 +104,16 @@ class TerminalScribe:
             elif temp == 1:
                 pos[1] = pos[1]*-1
             self.draw(pos)
-        
-
-
-
+    
+    def plot_func(self,function):
+        for x in range(self.canvas._x):
+            pos = [x, round(function(x))]
+            if self.canvas.hitsWall(pos)==2 and pos[1]:
+                self.draw(pos)
 
 # Create a new Canvas instance that is 30 units wide by 30 units tall 
-canvas = Canvas(10, 10)
+canvas = Canvas(30, 30)
 
-# Create a new scribe and give it the Canvas object
-scribe = TerminalScribe(canvas)
 
 # scribe.draw_square(5)
 
@@ -184,5 +185,19 @@ def move_together(scribe_data,scribes):
                         
 # checking the implementation of bouncing off walls
 
-scribe.setDegrees(270)
-scribe.forward(7)
+# scribe.setDegrees(270)
+# scribe.forward(7)
+
+
+def f_to_plot(x):
+    return 5*sin(x/4) + 10
+
+def f_to_plot_2(x):
+    return 5*cos(x/4) + 10
+
+# Create a new scribe and give it the Canvas object
+scribe = TerminalScribe(canvas)
+
+scribe.plot_func(f_to_plot)
+scribe2 = TerminalScribe(canvas, color="blue",mark="+")
+scribe2.plot_func(f_to_plot_2)
