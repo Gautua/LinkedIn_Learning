@@ -35,6 +35,20 @@ class Canvas:
             self._canvas[round(pos[0])][round(pos[1])] = mark
         except Exception as e:
             raise TerminalScribeException(e)
+
+    # Threading
+    def go(self):
+        max_moves = max([len(scribe.moves) for scribe in self.scribes])
+        for i in range(max_moves):
+            for scribe in self.scribes:
+                threads = []
+                if len(scribe.moves) > i:
+                    args = scribe.moves[i][1]+[self]
+                    threads.append(Thread(target=scribe.moves[i][0], args=args))
+                [thread.start() for thread in threads]
+                [thread.join() for thread in threads]
+            self.print()
+            time.sleep(self.framerate)
             
     # Clear the terminal (used to create animation)
     def clear(self):
