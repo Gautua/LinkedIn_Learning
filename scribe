@@ -35,8 +35,63 @@ class Canvas:
         for y in range(self._y):
             print(' '.join([col[y] for col in self._canvas]))
 
+class ScribeError(Exception):
+    error_code = None
+    error_message = None
+    def __init__(self):
+        super().__init__(f'ERROR {self.error_code} : {self.error_message} ')
+
+class Frame_Type_Error(ScribeError):
+    error_code =  101
+    error_message = "Frame rate must be a numeric value"
+
+class Frame_Value_Error(ScribeError):
+    error_code = 102
+    error_message = "Frame rate value given is not appropriate, value must be between 0 - 1"
+
+class MarkError(ScribeError):
+    error_code = 103
+    error_message = "Length of the mark should be 1"
+
+class TrailError(ScribeError):
+    error_code = 104
+    error_message = "Length of the trail mark should be 1"
+
+class PositionTypeError(ScribeError):
+    error_code = 105
+    error_message = "Positon is a list "
+
+class DirectionTypeError(ScribeError):
+    error_code = 106
+    error_message = "Direction is a numeric value"
+
+
+class PositionError(ScribeError):
+    error_code = 107
+    error_message = "Positon should be containing two values"
+
+class DirectionError(ScribeError):
+    error_code = 108
+    error_message = "Direction is a single numeric value"
+
+class ColorError(ScribeError):
+    error_code = 109
+    error_message = "Invalid colour option, please choose another color"
+
+def numberCheck(value):
+    try:
+        float(value)
+        return True
+    except:
+        return ValueError
+class WrongParamater(ScribeError):
+    error_code = 110
+    error_message = "Invalid Parameter"
+
+
 class TerminalScribe:
-    def __init__(self, canvas, mark='*', name = None ,color = "red", trail = ".", pos = [0,0], direc = [0,1], frames = 0.05 ):
+
+    def __init__(self, canvas, mark='*', name = None ,color = "red", trail = ".", pos = [0,0], direc = 120, frames = 0.05 ):
         self.canvas = canvas
         self.trail = trail
         self.mark = mark
@@ -45,6 +100,40 @@ class TerminalScribe:
         self.direction = direc
         self.name = name
         self.color = color
+        
+        # Mark Check 
+        if len(self.mark)!=1:
+                raise MarkError
+        
+        # Trail Check
+        if len(self.trail)>1:
+                raise TrailError
+
+        # Position Check 
+        if type(self.pos)==list:
+            if len(self.pos)==2:
+                if  not (numberCheck(self.pos[0]) and numberCheck(self.pos[1])):
+                    raise WrongParamater
+            else:
+                raise PositionError
+        else:
+            raise PositionTypeError
+            
+        if not numberCheck(self.direction):
+                raise DirectionTypeError
+        if type(self.color)!=str:
+                raise ColorError
+
+        if type(self.framerate) == int or type(self.framerate) == float:
+                if 0<self.framerate<1:
+                    pass
+                else:
+                    raise Frame_Value_Error
+        else:
+            raise Frame_Type_Error
+            
+
+    
     # changing the directions using degrees
     def setDegrees(self,degrees):
         radians = (degrees/180)*pi
@@ -110,6 +199,7 @@ class PlotterScribe(TerminalScribe):
             if self.canvas.hitsWall(pos)==2 and pos[1]:
                 self.draw(pos)
 
+
 # Create a new Canvas instance that is 30 units wide by 30 units tall 
 canvas = Canvas(30, 30)
 
@@ -130,7 +220,7 @@ canvas = Canvas(30, 30)
 
 # Since its a list of stuff about a scribe, trying a list of dictionaries
 
-scribe_data = [{'name':'Sam','pos':[10,5],'direc':130,'marker':'+','color':'green','move':'up,down,right,forward,left'+(',up'*4)},
+scribe_data = [{'name':'Sam','pos':[10,3],'direc':130,'marker':'+','color':'green','move':'up,down,right,forward,left'+(',up'*4)},
 {'name':'Rick','pos':[10,6],'direc':90,'marker':'*','color':'yellow','move':'down,'*4+',left'*3}
                 ]
 
