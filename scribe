@@ -2,15 +2,23 @@ import os
 import time
 from termcolor import colored
 from math import sin, cos, pi
+from threading import Thread
 # This is the Canvas class. It defines some height and width, and a 
 # matrix of characters to keep track of where the TerminalScribes are moving
+
+class TerminalScribeException(Exception):
+    def __init__(self, message=''):
+        super().__init__(colored(message, 'red'))
+
 class Canvas:
-    def __init__(self, width, height):
+    def __init__(self, width, height, scribes = [], framerate = 0.5):
         self._x = width
         self._y = height
         # This is a grid that contains data about where the 
         # TerminalScribes have visited
         self._canvas = [[' ' for y in range(self._y)] for x in range(self._x)]
+        self.scribes = scribes
+        self.framerate = framerate
 
     # Returns True if the given point is outside the boundaries of the Canvas
     def hitsWall(self, point):
@@ -23,8 +31,11 @@ class Canvas:
 
     # Set the given position to the provided character on the canvas
     def setPos(self, pos, mark):
-        self._canvas[round(pos[0])][round(pos[1])] = mark
-
+        try:
+            self._canvas[round(pos[0])][round(pos[1])] = mark
+        except Exception as e:
+            raise TerminalScribeException(e)
+            
     # Clear the terminal (used to create animation)
     def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
